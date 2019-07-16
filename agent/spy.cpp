@@ -41,6 +41,7 @@ void Spy::create()
         {
             if (QQuickWindow *window = qobject_cast<QQuickWindow *>(wnd)) {
                 spy->rootWindow = window;
+                spy->cache.refreshCache(window);
             }
         }
 
@@ -49,7 +50,7 @@ void Spy::create()
         OverlayPainter::instance().setWindow(qobject_cast<QQuickWindow*>(spy->rootWindow));
     });
 
-    spy->cache.rebuild(qGuiApp);
+    spy->cache.refreshCache(qGuiApp);
 }
 
 Spy *Spy::instance()

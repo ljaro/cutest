@@ -116,13 +116,13 @@ void Cache::insertObjectTree(QObject *obj)
         return;
     }
 
-    auto className = Inspector::getClassName(obj);
-    auto objName = Inspector::getObjectName(obj);
-    auto typeName = Inspector::getObjectTypeName(obj);
-
     if(!objects.contains(obj))
     {
         objects.insert(obj);
+
+        auto className = Inspector::getClassName(obj);
+        auto objName = Inspector::getObjectName(obj);
+        auto typeName = Inspector::getObjectTypeName(obj);
 
         objectNameHash.insertMulti(objName, obj);
         classNameHash.insertMulti(className, obj);
@@ -186,7 +186,7 @@ void Cache::dump()
 //    }
 }
 
-void Cache::rebuild(QObject *root)
+void Cache::refreshCache(QObject *root)
 {
     QMutexLocker locker(&mutex);
 
