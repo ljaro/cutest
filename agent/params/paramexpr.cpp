@@ -33,7 +33,7 @@ ParamExpr::ParamExpr(const std::string& exp)
     Expr* prev = nullptr;
 
     int cnt = 0;
-    for(auto expr : expressions)
+    for(auto const& expr : qAsConst(expressions))
     {
         auto tokens = expr.split('=');
         if(cnt == 0)

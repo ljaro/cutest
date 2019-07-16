@@ -37,7 +37,8 @@ void Spy::create()
     //TODO hack
     QTimer::singleShot(2000, [spy](){
 
-        foreach(auto const& wnd , qGuiApp->allWindows())
+        const auto windows = qGuiApp->allWindows();
+        for(auto const& wnd : qAsConst(windows))
         {
             if (QQuickWindow *window = qobject_cast<QQuickWindow *>(wnd)) {
                 spy->rootWindow = window;

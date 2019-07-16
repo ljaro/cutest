@@ -9,10 +9,10 @@
 
 QList<QQuickItem*> visualChildren(QQuickItem* ancestor)
 {
-    QList<QQuickItem*> result;
-    result = ancestor->childItems();
+    auto result = ancestor->childItems();
 
-    foreach(const auto& item, result)
+    const auto tmpItems = result;
+    for(const auto& item : tmpItems)
     {
         result.append(visualChildren(item));
     }
@@ -133,7 +133,7 @@ void Cache::insertObjectTree(QObject *obj)
         lookupObjectType.insert(obj, typeName);
     }
 
-    foreach(QObject* obj, obj->children())
+    for(auto obj : qAsConst(obj->children()))
     {
         insertObjectTree(obj);
     }
@@ -329,7 +329,7 @@ void Cache::bySearchInAncestor(QObject *ancestor, const QString& name, QObjectLi
 
         auto children = qancestor != nullptr ? visualChildren(qancestor) : QList<QQuickItem*>();
 
-        foreach (const auto& child, children)
+        for (const auto& child : qAsConst(children))
         {
             if(func(child, name))
             {
@@ -340,7 +340,7 @@ void Cache::bySearchInAncestor(QObject *ancestor, const QString& name, QObjectLi
     else if(qobject_cast<QWidget*>(ancestor))
     {
         auto children = ancestor != nullptr ? ancestor->findChildren<QWidget*>() : QList<QWidget*>();
-        foreach (const auto& child, children)
+        for (const auto& child : qAsConst(children))
         {
             if(func(child, name))
             {
