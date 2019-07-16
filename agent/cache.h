@@ -28,7 +28,7 @@ public:
     bool insert(QObject* obj);
     bool remove(QObject* obj);
     void dump();
-    void rebuild(QObject* root);
+    void refreshCache(QObject* root);
 
     // access
     QObjectList getObjects() { return objects.values();}
