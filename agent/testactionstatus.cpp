@@ -99,6 +99,13 @@ Status Status::invokeError(QString info)
     return *this;
 }
 
+Status Status::parsingError(QString info)
+{
+    values.insert("status", "failed");
+    values.insert("details", " " + info);
+    return *this;
+}
+
 Status::Status(Response *parentAction) :
     parentAction(parentAction)
 {

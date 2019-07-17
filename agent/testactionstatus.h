@@ -22,6 +22,7 @@ public:
     Status unsupportedType(const QString& typeInfo);
     Status notImplemented(QString info);
     Status invokeError(QString info);
+    Status parsingError(QString info);//{return Status(parentAction).parsingError(info);}
 
     QVariantHash getStatuses() {return values;}
 private:
@@ -50,6 +51,7 @@ public:
     Status unsupportedType(QString typeInfo) {return Status(parentAction).unsupportedType(typeInfo);}
     Status notImplemented(QString info = ""){return Status(parentAction).notImplemented(info);}
     Status invokeError(QString info){return Status(parentAction).invokeError(info);}
+    Status parsingError(QString info){return Status(parentAction).parsingError(info);}
 private:
     Response* parentAction;
     ActionStatus(Response* parentAction);

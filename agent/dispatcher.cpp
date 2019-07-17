@@ -81,38 +81,53 @@ void Dispatcher::parseCommand(const QString& cmd)
     //TODO should valid context here or in each action?
     auto ctx = getContext(cmdCtx);
     auto params = obj.value("params").isObject() ? obj.value("params").toObject() : QJsonObject();
-    auto& action = TestActionBuilder::getAction(cmdName, ctx, params);
 
-    state = State::CMD_PROCESSING;
-    action.exec(ctx, [this, requestId](ActionResult result, Status status){
+    try
+    {
+        auto& action = TestActionBuilder::getAction(cmdName, ctx, params);
 
-        if(result.type != ActionResult::ValueType::Simple && result.type != ActionResult::ValueType::None)
-        {
-            auto& obj = result.objectValue;
-            if(checkAndRememberContext(obj))
+        state = State::CMD_PROCESSING;
+        action.exec(ctx, [this, requestId](ActionResult result, Status status){
+
+            if(result.type != ActionResult::ValueType::Simple && result.type != ActionResult::ValueType::None)
+            {
+                auto& obj = result.objectValue;
+                if(checkAndRememberContext(obj))
+                {
+                    auto response = result.createResponse(requestId, status);
+                    client->sendResponse(response);
+                }
+                else
+                {
+                    //TODO refactor
+                    auto response = ActionResult().createResponse(requestId, ActionStatus::create(this).contextNotFound());
+                    client->sendResponse(response);
+                }
+            }
+            else if(result.type == ActionResult::ValueType::Simple)
             {
                 auto response = result.createResponse(requestId, status);
                 client->sendResponse(response);
             }
-            else
-            {
-                //TODO refactor
-                auto response = ActionResult().createResponse(requestId, ActionStatus::create(this).contextNotFound());
+            else {
+                auto response = createResponse(requestId, TestObject(), ActionStatus::create(this).contextNotFound());
                 client->sendResponse(response);
             }
-        }
-        else if(result.type == ActionResult::ValueType::Simple)
-        {
-            auto response = result.createResponse(requestId, status);
-            client->sendResponse(response);
-        }
-        else {
-            auto response = createResponse(requestId, TestObject(), ActionStatus::create(this).contextNotFound());
-            client->sendResponse(response);
-        }
 
-        state = State::IDLE;
-    });
+            state = State::IDLE;
+        });
+    }
+    catch (const ParamParsingException& e)
+    {
+        auto response = createResponse(requestId, TestObject(), ActionStatus::create(this).parsingError(e.what()));
+        client->sendResponse(response);
+    }
+    catch (...)
+    {
+        auto response = createResponse(requestId, TestObject(), ActionStatus::create(this).parsingError(""));
+        client->sendResponse(response);
+    }
+
 }
 
 QByteArray Dispatcher::createResponse(QString requestId,
