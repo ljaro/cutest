@@ -1,5 +1,5 @@
-from actions import do_action
-from object import QQ
+from .actions import do_action
+from .object import QQ
 
 
 class QModel(QQ):

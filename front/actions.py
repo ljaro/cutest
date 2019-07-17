@@ -1,8 +1,8 @@
 import uuid
 import time
 import json
-from connection import Connection
-from object_factory import create_object
+from .connection import Connection
+from .object_factory import create_object
 
 
 class ResponseFormatError(Exception):

@@ -10,7 +10,7 @@ class Config
 public:
     Config();
     static Config& instance();
-    QString server_ip = "127.0.0.1";
+    QString server_ip = "0.0.0.0";
     QString server_port = "10010";
 private:
     std::vector<QString> paths = {"./testconfig.json","~/testconfig.json", "/usr/local/tests/testconfig.json"};
