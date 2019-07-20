@@ -46,11 +46,11 @@ bool Get::execSync(TestObject context, ActionCallback callback)
                 switch (prop.propertyTypeCategory())
                 {
                 case QQmlProperty::InvalidCategory:
-                    qDebug() << "INV";
-                    break;
+                    callback(context, ActionStatus::create(this).unsupportedType("in invalidCategory"));
+                    return true;
                 case QQmlProperty::List:
-                    qDebug() << "LIST";
-                    break;
+                    callback(context, ActionStatus::create(this).unsupportedType("in List"));
+                    return true;
                 case QQmlProperty::Object:
                     handleObject(prop, callback, context);
                     break;
@@ -103,6 +103,7 @@ bool Get::execSync(TestObject context, ActionCallback callback)
         return true;
     }
 
+    callback(context, ActionStatus::create(this).unsupportedType(""));
 
     return true;
 }
@@ -166,6 +167,8 @@ void Get::handleNormal(QQmlProperty prop, ActionCallback callback, TestObject co
     {
         auto value = prop.read();
         context.updateProperty(property_name, value);
+        callback(context, ActionStatus::create(this).ok());
+        //TODO should we really return whole context or just send property
     }
 
 
