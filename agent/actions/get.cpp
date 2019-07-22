@@ -53,10 +53,10 @@ bool Get::execSync(TestObject context, ActionCallback callback)
                     return true;
                 case QQmlProperty::Object:
                     handleObject(prop, callback, context);
-                    break;
+                    return true;
                 case QQmlProperty::Normal:
                     handleNormal(prop, callback, context);
-                    break;
+                    return true;
                 }
             }
             else if (prop.type() == QQmlProperty::Type::SignalProperty)
