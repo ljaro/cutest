@@ -67,7 +67,8 @@ def handle_response(response):
         details = response['status']['details'] if 'details' in response['status'] else ''
         raise TestFailed(status, details)
     else:
-        return response['context'], response['qobject'] if 'qobject' in response else None
+        value = response['qobject'] if 'qobject' in response else response['simple'] if 'simple' in response else None
+        return response['context'], value
 
 
 class ObjectActions:

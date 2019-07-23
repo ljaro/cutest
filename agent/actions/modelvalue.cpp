@@ -18,14 +18,30 @@ bool ModelValue::execSync(TestObject context, ActionCallback callback)
 
     if(auto model = qobject_cast<QAbstractItemModel*>(context.getQObject()))
     {
-        auto role = model->roleNames().key(paramRole.toUtf8(), Qt::DisplayRole);
-        auto value = model->data(model->index(paramIndex, 0), role);
-
         //TODO we don't know what is under value(QVariant)
         //this should be handled with specialized function
         ActionResult result;
         result.type = ActionResult::ValueType::Simple;
-        result.simpleValue = value;
+
+        auto role = model->roleNames().key(paramRole.toUtf8(), Qt::DisplayRole);
+
+        if(!paramIndex.isValid())
+        {
+            QVariantList arr;
+            for(int i = 0; i< model->rowCount(); ++i)
+            {
+                auto value = model->data(model->index(i, 0), role);
+                arr.append(value);
+            }
+
+            result.simpleValue = arr;
+        }
+        else
+        {
+            auto value = model->data(model->index(paramIndex.toInt(), 0), role);
+            result.simpleValue = value;
+        }
+
         callback(result, ActionStatus::create(this).ok());
     }
     else
@@ -46,5 +62,9 @@ AsyncResult ModelValue::execAsync(TestObject context, ActionCallback callback)
 void ModelValue::applyParams(QJsonObject params)
 {
     paramRole = params.value("role").toString();
-    paramIndex = params.value("index").toInt();
+
+    if(params.contains("index"))
+    {
+        paramIndex = params.value("index");
+    }
 }

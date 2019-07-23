@@ -22,7 +22,7 @@ protected:
     void applyParams(QJsonObject params) override;
 private:
     QString paramRole = "RoleDisplay";
-    int paramIndex = 0;
+    QVariant paramIndex;
 };
 
 }}

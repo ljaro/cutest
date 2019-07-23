@@ -12,8 +12,9 @@ class QModel(QQ):
         message = {}
         message.update({"cmd": "role_names"})
         message.update({"context": self.context})
-        new_ctx, result = do_action(self._conn, message)
+        new_ctx, result = do_action(self._conn, message, fail_no_context=False)
         print('ok')
+        return create_object(result)
 
     def value(self, role, idx):
         print('get model''s value ' + role + ' ' + str(idx), end='', flush=True)
@@ -21,9 +22,17 @@ class QModel(QQ):
         message.update({"cmd": "model_value"})
         message.update({"context": self.context})
         message.update({"params": {"role": role, "index": idx}})
-        new_ctx, result = do_action(self._conn, message)
+        new_ctx, result = do_action(self._conn, message, fail_no_context=False)
         print('ok')
+        return create_object(result)
 
     def values(self, role):
-        pass
+        print('get model''s values ' + role, end='', flush=True)
+        message = {}
+        message.update({"cmd": "model_value"})
+        message.update({"context": self.context})
+        message.update({"params": {"role": role}})
+        new_ctx, result = do_action(self._conn, message, fail_no_context=False)
+        print('ok')
+        return create_object(result)
 
