@@ -335,3 +335,28 @@ class ObjectActions:
         print('ok')
 
         return self
+
+    def print_object(self, item, max_depth, depth=0):
+        object_name = item['objectName'].strip() if item['objectName'].strip() else '<empty>'
+        class_name = item['className'].strip() if item['className'].strip() else '<empty>'
+        type_name = item['typeName'].strip() if item['typeName'].strip() else '<empty>'
+
+        if depth == 0:
+            print("+-- {} ({}) - {}".format(object_name, class_name, type_name))
+        else:
+            print("|{}+-- {} ({}) - {}".format(" " * ((depth*3) + (depth-1)), object_name, class_name, type_name))
+
+        if len(item['children']) > 0 and depth > max_depth:
+            print("|{}<...has children...>".format(" " * (((depth+1)*3) + (depth))))
+            return
+
+        for itm in item['children']:
+            self.print_object(itm, max_depth, depth+1)
+
+    def tree(self, max_depth=3):
+        message = {}
+        message.update({"cmd": "tree"})
+        message.update({"context": self.context})
+        new_ctx, result = do_action(self._conn, message, fail_no_context=False)
+        self.print_object(result, max_depth, 0)
+

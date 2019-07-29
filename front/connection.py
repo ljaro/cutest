@@ -37,9 +37,10 @@ class Connection:
         size_chunks = []
         bytes_recd = 0
         msg_len_size = 0
+        msg_len_bytes = 3
 
-        while msg_len_size < 2:
-            chunk = self._socket.recv(min(2 - msg_len_size, 2048))
+        while msg_len_size < msg_len_bytes:
+            chunk = self._socket.recv(min(msg_len_bytes - msg_len_size, 2048))
             if chunk == b'':
                 raise RuntimeError("socket connection broken")
             size_chunks.append(chunk)
