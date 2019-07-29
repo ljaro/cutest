@@ -32,6 +32,7 @@ SOURCES += agent.cpp \
     actions/highlight.cpp \
     actions/hitkey.cpp \
     actions/invoke.cpp \
+    actions/modelset.cpp \
     actions/modelvalue.cpp \
     actions/mousemove.cpp \
     actions/mousepress.cpp \
@@ -73,6 +74,7 @@ HEADERS += agent.h\
     actions/highlight.h \
     actions/hitkey.h \
     actions/invoke.h \
+    actions/modelset.h \
     actions/modelvalue.h \
     actions/mousemove.h \
     actions/mousepress.h \
