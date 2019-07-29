@@ -41,6 +41,7 @@ SOURCES += agent.cpp \
     actions/null.cpp \
     actions/rolenames.cpp \
     actions/set.cpp \
+    actions/tree.cpp \
     actions/waitfor.cpp \
     actions/waitforcheck.cpp \
     actions/waitforchild.cpp \
@@ -82,6 +83,7 @@ HEADERS += agent.h\
     actions/nextaction.h \
     actions/rolenames.h \
     actions/set.h \
+    actions/tree.h \
     actions/waitfor.h \
     actions/waitforcheck.h \
     actions/waitforchild.h \

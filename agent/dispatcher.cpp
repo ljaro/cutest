@@ -160,7 +160,7 @@ QByteArray Dispatcher::createResponse(QString requestId,
  */
 
 bool Dispatcher::checkAndRememberContext(TestObject obj)
-{
+{//TODO spy lock?
     if(!obj.getQObject())
     {
         return false;

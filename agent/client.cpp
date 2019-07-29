@@ -44,16 +44,18 @@ void Client::write(QByteArray data)
 
     auto size = data.size();
 
-    if(size >= std::numeric_limits<unsigned short>::max())
+    if(size >= 16000000)
     {
         qDebug() << "message size should not exceed " << std::numeric_limits<unsigned short>::max();
+
+        //TODO handle response
         return;
     }
 
+    out << static_cast<quint8>((size >> 16) & 0xFF);
+    out << static_cast<quint8>((size >> 8) & 0xFF);
+    out << static_cast<quint8>(size & 0xFF);
 
-    //out.writeBytes(&sizeBuff, 2);
-
-    out << static_cast<quint16>(size);
     out.writeRawData(data.data(), data.size());
 
     qDebug() << block;
