@@ -22,10 +22,10 @@ Status Status::ok()
     return *this;
 }
 
-Status Status::wrongParams()
+Status Status::wrongParams(QString info)
 {
     values.insert("status", cannotExecuteStr());
-    values.insert("details", "wrong parameters");
+    values.insert("details", QString("wrong parameters %1").arg(info));
     return *this;
 }
 

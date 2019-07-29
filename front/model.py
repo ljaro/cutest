@@ -1,5 +1,6 @@
 from .actions import do_action
 from .object import QQ
+from .object_factory import create_object
 
 
 class QModel(QQ):
@@ -35,4 +36,13 @@ class QModel(QQ):
         new_ctx, result = do_action(self._conn, message, fail_no_context=False)
         print('ok')
         return create_object(result)
+
+    def set_value(self, idx, value, role = ''):
+        print('get model''s values ' + role, end='', flush=True)
+        message = {}
+        message.update({"cmd": "model_set"})
+        message.update({"context": self.context})
+        message.update({"params": {"role": role, "index": idx, "value": value}})
+        new_ctx, result = do_action(self._conn, message, fail_no_context=False)
+        print('ok')
 

@@ -21,6 +21,7 @@
 #include "actions/invoke.h"
 #include "actions/modelvalue.h"
 #include "actions/rolenames.h"
+#include "actions/modelset.h"
 using namespace std;
 
 Agent::Agent()
@@ -42,6 +43,7 @@ Agent::Agent()
     TestActionBuilder::registerAction(make_shared<Invoke>());
     TestActionBuilder::registerAction(make_shared<ModelValue>());
     TestActionBuilder::registerAction(make_shared<RoleNames>());
+    TestActionBuilder::registerAction(make_shared<ModelSet>());
     TestActionBuilder::registerAction(make_shared<Null>());
 
     CacheLookup::instance();

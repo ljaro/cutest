@@ -11,7 +11,7 @@ class Status
 public:
     Status(Response* parentAction);
     Status ok();
-    Status wrongParams();
+    Status wrongParams(QString info);
     Status actionNotFound();
     Status contextNotFound();
     Status objectNotFound();
@@ -40,7 +40,7 @@ class ActionStatus
 public:
     static ActionStatus create(Response* parentAction);
     Status ok() {return Status(parentAction).ok();}
-    Status wrongParams() {return Status(parentAction).wrongParams();}
+    Status wrongParams(QString info = "") {return Status(parentAction).wrongParams(info);}
     Status actionNotFound() {return Status(parentAction).actionNotFound();}
     Status contextNotFound() {return Status(parentAction).contextNotFound();}
     Status objectNotFound() {return Status(parentAction).objectNotFound();}
