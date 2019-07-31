@@ -1,4 +1,4 @@
-from .actions import ObjectActions
+from actions import ObjectActions
 
 
 class QQ(ObjectActions):
