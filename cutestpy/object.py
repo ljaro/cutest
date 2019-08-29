@@ -1,4 +1,4 @@
-from .actions import ObjectActions
+from cutestpy.actions import ObjectActions
 
 
 class QQ(ObjectActions):
