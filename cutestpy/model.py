@@ -1,6 +1,6 @@
-from .actions import do_action
-from .object import QQ
-from .object_factory import create_object
+from cutestpy.actions import do_action
+from cutestpy.object import QQ
+from cutestpy.object_factory import create_object
 
 
 class QModel(QQ):
