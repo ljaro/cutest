@@ -3,11 +3,13 @@ import time
 import json
 from cutestpy.connection import Connection
 from cutestpy.object_factory import create_object
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ResponseFormatError(Exception):
     pass
-
 
 class TestFailed(Exception):
     pass
@@ -88,14 +90,14 @@ class ObjectActions:
         :return: context QQ or raise  TestFailed
         should return QQ with found context. If nothing found, timeout raise TestFailed exception
         """
-        print('wait_for ' + expr, end='', flush=True)
+        logger.info('wait_for ' + expr)
         message = {}
         message.update({"cmd": "wait_for"})
         message.update({"context": 'frontend'})
         message.update({"params": {"exp": expr}})
         new_ctx, result = do_action(self._conn, message)
 
-        print(' found (ok)', flush=True)
+        logger.debug(' found (ok)')
 
         new_obj = create_object(result)
         return new_obj
@@ -116,14 +118,14 @@ class ObjectActions:
         :return: context QQ or raise  TestFailed
         should return QQ with found context. If nothing found, timeout raise TestFailed exception
         """
-        print('wait_for_child '+expr, end='', flush=True)
+        logger.info('wait_for_child ' + expr)
         message = {}
         message.update({"cmd": "wait_for_child"})
         message.update({"context": self.context})
         message.update({"params": {"exp": expr}})
         new_ctx, result = do_action(self._conn, message)
 
-        print(' found (ok)', flush=True)
+        logger.debug(' found (ok)')
         new_obj = create_object(result)
         return new_obj
 
@@ -146,7 +148,7 @@ class ObjectActions:
         :param timeout:
         :return: True or False depending whether object was found
         """
-        print('wait_for_check ' + expression, end='', flush=True)
+        logger.info('wait_for_check ' + expression)
         message = {}
         message.update({"cmd": "wait_for_check"})
         message.update({"context": "frontend"})
@@ -166,7 +168,7 @@ class ObjectActions:
         :param hold_time: mouse left button hold time
         :return: QQ with context on which was invoked. TestFailed may be raised if context on with clicked was not found
         """
-        print('click ' + self._search_context, flush=True)
+        logger.info('click ' + self._search_context)
         message = {}
         message.update({"cmd": "click"})
         message.update({"context": self.context})
@@ -175,7 +177,7 @@ class ObjectActions:
         return self
 
     def mouse_press(self):
-        print('mouse_press ' + self._search_context, flush=True)
+        logger.info('mouse_press ' + self._search_context)
         message = {}
         message.update({"cmd": "mouse_action"})
         message.update({"context": self.context})
@@ -184,7 +186,7 @@ class ObjectActions:
         return self
 
     def mouse_release(self):
-        print('mouse_release ' + self._search_context, flush=True)
+        logger.info('mouse_release ' + self._search_context)
         message = {}
         message.update({"cmd": "mouse_action"})
         message.update({"context": self.context})
@@ -193,7 +195,7 @@ class ObjectActions:
         return self
 
     def mouse_move(self, x, y):
-        print('mouse_move ' + self._search_context, flush=True)
+        logger.info('mouse_move ' + self._search_context)
         message = {}
         message.update({"cmd": "mouse_action"})
         message.update({"context": self.context})
@@ -202,9 +204,9 @@ class ObjectActions:
         return self
 
     def wait(self, seconds):
-        print('wait ' + str(seconds), end='')
+        logger.info('wait ' + str(seconds))
         time.sleep(seconds)
-        print(' done')
+        logger.info(' done')
         return self
 
     def hi(self, msec):
@@ -230,7 +232,7 @@ class ObjectActions:
         :param ancestor_object_name: objectName of ancestor
         :return:
         """
-        print('find_sibling ' + expr + ' ' + ancestor_object_name, end='', flush=True)
+        logger.info('find_sibling ' + expr + ' ' + ancestor_object_name)
         message = {}
         message.update({"cmd": "find_sibling"})
         message.update({"context": self.context})
@@ -239,28 +241,28 @@ class ObjectActions:
 
         new_obj = create_object(result)
 
-        print('ok')
+        logger.debug('ok')
 
         return new_obj
 
     def hit_key(self, key_name):
-        print('find_sibling ' + key_name, end='', flush=True)
+        logger.info('find_sibling ' + key_name)
         message = {}
         message.update({"cmd": "hit_key"})
         message.update({"context": self.context})
         message.update({"params": {"key_name": key_name}})
         do_action(self._conn, message)
-        print('ok')
+        logger.debug('ok')
         return self
 
     def set(self, property_name, property_value):
-        print('set property ' + property_name + ' to ' + str(property_value), end='', flush=True)
+        logger.info('set property ' + property_name + ' to ' + str(property_value))
         message = {}
         message.update({"cmd": "set"})
         message.update({"context": self.context})
         message.update({"params": {"property_name": property_name, "property_value": property_value}})
         do_action(self._conn, message)
-        print('ok')
+        logger.debug('ok')
         return self
 
     def get(self, property_name):
@@ -271,13 +273,13 @@ class ObjectActions:
         :param property_name:
         :return: property value
         """
-        print('get property ' + property_name, end='', flush=True)
+        logger.info('get property ' + property_name)
         message = {}
         message.update({"cmd": "get"})
         message.update({"context": self.context})
         message.update({"params": {"property_name": property_name}})
         new_ctx, result = do_action(self._conn, message)
-        print('ok')
+        logger.debug('ok')
 
         if new_ctx == self.context:
             self._properties = result['properties']
@@ -293,7 +295,7 @@ class ObjectActions:
         :param ancestor_object_name: objectName of ancestor
         :return:
         """
-        print('next ', end='', flush=True)
+        logger.info('next ')
         message = {}
         message.update({"cmd": "next"})
         message.update({"context": self.context})
@@ -301,7 +303,7 @@ class ObjectActions:
 
         new_obj = create_object(result, '')
 
-        print('ok')
+        logger.debug('ok')
 
         return new_obj
 
@@ -332,7 +334,7 @@ class ObjectActions:
 
         new_obj = create_object(result)
 
-        print('ok')
+        logger.debug('ok')
 
         return self
 
@@ -342,16 +344,17 @@ class ObjectActions:
         type_name = item['typeName'].strip() if item['typeName'].strip() else '<empty>'
 
         if depth == 0:
-            print("+-- {} ({}) - {}".format(object_name, class_name, type_name))
+            logger.info("+-- {} ({}) - {}".format(object_name, class_name, type_name))
         else:
-            print("|{}+-- {} ({}) - {}".format(" " * ((depth*3) + (depth-1)), object_name, class_name, type_name))
+            logger.info(
+                "|{}+-- {} ({}) - {}".format(" " * ((depth * 3) + (depth - 1)), object_name, class_name, type_name))
 
         if len(item['children']) > 0 and depth > max_depth:
-            print("|{}<...has children...>".format(" " * (((depth+1)*3) + (depth))))
+            logger.info("|{}<...has children...>".format(" " * (((depth + 1) * 3) + (depth))))
             return
 
         for itm in item['children']:
-            self.print_object(itm, max_depth, depth+1)
+            self.print_object(itm, max_depth, depth + 1)
 
     def tree(self, max_depth=3):
         message = {}
@@ -359,4 +362,3 @@ class ObjectActions:
         message.update({"context": self.context})
         new_ctx, result = do_action(self._conn, message, fail_no_context=False)
         self.print_object(result, max_depth, 0)
-

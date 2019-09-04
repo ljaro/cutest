@@ -1,5 +1,7 @@
 import socket as S
 import json
+import logging
+logger = logging.getLogger(__name__)
 
 
 class Connection:
@@ -20,7 +22,7 @@ class Connection:
         t1 = json.dumps(message).encode('utf-8')
         t0 = bytes(len(t1).to_bytes(2, byteorder='little'))
         data = t0 + t1
-        # print(data)
+        # logger.debug(data)
         self._socket.sendall(data)
 
     def read_message(self):
@@ -29,7 +31,7 @@ class Connection:
             msg = json.loads(data.decode('utf-8'))
             return msg
         except:
-            print('Decode error')
+            logger.critical('Decode error')
             raise
 
     def receive(self):
@@ -47,7 +49,7 @@ class Connection:
             msg_len_size = msg_len_size + len(chunk)
 
         msg_len = int.from_bytes(b''.join(size_chunks), byteorder='big')
-        # print(msg_len)
+        # logger.debug(msg_len)
 
         while bytes_recd < msg_len:
             chunk = self._socket.recv(min(msg_len - bytes_recd, 2048))
