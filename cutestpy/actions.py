@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 class ResponseFormatError(Exception):
     pass
 
+
 class TestFailed(Exception):
     pass
 
@@ -90,7 +91,7 @@ class ObjectActions:
         :return: context QQ or raise  TestFailed
         should return QQ with found context. If nothing found, timeout raise TestFailed exception
         """
-        logger.info('wait_for ' + expr)
+        logger.info('wait_for {}'.format(expr))
         message = {}
         message.update({"cmd": "wait_for"})
         message.update({"context": 'frontend'})
@@ -118,7 +119,7 @@ class ObjectActions:
         :return: context QQ or raise  TestFailed
         should return QQ with found context. If nothing found, timeout raise TestFailed exception
         """
-        logger.info('wait_for_child ' + expr)
+        logger.info('wait_for_child {}'.format(expr))
         message = {}
         message.update({"cmd": "wait_for_child"})
         message.update({"context": self.context})
@@ -132,7 +133,7 @@ class ObjectActions:
     def wait_for_child_object(self, object_name, visible=True):
         return self.wait_for_child('objectName={0}&visible={1}'.format(object_name, str(visible).lower()))
 
-    def wait_for_check(self, expression, timeout=5):
+    def wait_for_check(self, expr, timeout=5):
         """
         For given object_name wait for object until timeout expire.
         If timeout expire will return False as object was not found.
@@ -148,11 +149,11 @@ class ObjectActions:
         :param timeout:
         :return: True or False depending whether object was found
         """
-        logger.info('wait_for_check ' + expression)
+        logger.info('wait_for_check {}'.format(expr))
         message = {}
         message.update({"cmd": "wait_for_check"})
         message.update({"context": "frontend"})
-        message.update({"params": {"timeout": timeout, "exp": expression}})
+        message.update({"params": {"timeout": timeout, "exp": expr}})
         new_ctx, result = do_action(self._conn, message, fail_no_context=False)
 
         return create_object(result) if new_ctx else None
@@ -168,7 +169,7 @@ class ObjectActions:
         :param hold_time: mouse left button hold time
         :return: QQ with context on which was invoked. TestFailed may be raised if context on with clicked was not found
         """
-        logger.info('click ' + self._search_context)
+        logger.info('click {}'.format(self._search_context))
         message = {}
         message.update({"cmd": "click"})
         message.update({"context": self.context})
@@ -177,7 +178,7 @@ class ObjectActions:
         return self
 
     def mouse_press(self):
-        logger.info('mouse_press ' + self._search_context)
+        logger.info('mouse_press {}'.format(self._search_context))
         message = {}
         message.update({"cmd": "mouse_action"})
         message.update({"context": self.context})
@@ -186,7 +187,7 @@ class ObjectActions:
         return self
 
     def mouse_release(self):
-        logger.info('mouse_release ' + self._search_context)
+        logger.info('mouse_release {}'.format(self._search_context))
         message = {}
         message.update({"cmd": "mouse_action"})
         message.update({"context": self.context})
@@ -195,7 +196,7 @@ class ObjectActions:
         return self
 
     def mouse_move(self, x, y):
-        logger.info('mouse_move ' + self._search_context)
+        logger.info('mouse_move {}'.format(self._search_context))
         message = {}
         message.update({"cmd": "mouse_action"})
         message.update({"context": self.context})
@@ -204,7 +205,7 @@ class ObjectActions:
         return self
 
     def wait(self, seconds):
-        logger.info('wait ' + str(seconds))
+        logger.info('wait {}'.format(seconds))
         time.sleep(seconds)
         logger.info(' done')
         return self
@@ -232,7 +233,7 @@ class ObjectActions:
         :param ancestor_object_name: objectName of ancestor
         :return:
         """
-        logger.info('find_sibling ' + expr + ' ' + ancestor_object_name)
+        logger.info('find_sibling {} {}'.format(expr, ancestor_object_name))
         message = {}
         message.update({"cmd": "find_sibling"})
         message.update({"context": self.context})
@@ -246,7 +247,7 @@ class ObjectActions:
         return new_obj
 
     def hit_key(self, key_name):
-        logger.info('find_sibling ' + key_name)
+        logger.info('find_sibling {}'.format(key_name))
         message = {}
         message.update({"cmd": "hit_key"})
         message.update({"context": self.context})
@@ -256,7 +257,7 @@ class ObjectActions:
         return self
 
     def set(self, property_name, property_value):
-        logger.info('set property ' + property_name + ' to ' + str(property_value))
+        logger.info('set property {} to {}'.format(property_name, property_value))
         message = {}
         message.update({"cmd": "set"})
         message.update({"context": self.context})
@@ -273,7 +274,7 @@ class ObjectActions:
         :param property_name:
         :return: property value
         """
-        logger.info('get property ' + property_name)
+        logger.info('get property {}'.format(property_name))
         message = {}
         message.update({"cmd": "get"})
         message.update({"context": self.context})
@@ -344,13 +345,12 @@ class ObjectActions:
         type_name = item['typeName'].strip() if item['typeName'].strip() else '<empty>'
 
         if depth == 0:
-            logger.info("+-- {} ({}) - {}".format(object_name, class_name, type_name))
+            print("+-- {} ({}) - {}".format(object_name, class_name, type_name))
         else:
-            logger.info(
-                "|{}+-- {} ({}) - {}".format(" " * ((depth * 3) + (depth - 1)), object_name, class_name, type_name))
+            print("|{}+-- {} ({}) - {}".format(" " * ((depth * 3) + (depth - 1)), object_name, class_name, type_name))
 
         if len(item['children']) > 0 and depth > max_depth:
-            logger.info("|{}<...has children...>".format(" " * (((depth + 1) * 3) + (depth))))
+            print("|{}<...has children...>".format(" " * (((depth + 1) * 3) + (depth))))
             return
 
         for itm in item['children']:
