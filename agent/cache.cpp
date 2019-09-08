@@ -4,8 +4,12 @@
 #include <QQuickItem>
 #include <QWidget>
 #include <QCoreApplication>
-
 #include "inspector.h"
+#include "spy.h"
+
+#define lock() \
+    QMutexLocker locker1(Spy::instance()->objectLock()); \
+    QMutexLocker locker2(&mutex);
 
 QList<QQuickItem*> visualChildren(QQuickItem* ancestor)
 {
@@ -56,19 +60,19 @@ Cache& Cache::operator=(const Cache& rhs)
 
 bool Cache::hasVisualObject(QObject *obj)
 {
-    QMutexLocker locker(&mutex);
+    lock();
     return lookupObjectName.contains(obj) && objects.contains(obj);
 }
 
 bool Cache::hasObject(QObject *obj)
 {
-    QMutexLocker locker(&mutex);
+    lock();
     return objects.contains(obj);
 }
 
 bool Cache::insert(QObject *obj)
 {
-    QMutexLocker locker(&mutex);
+    lock();
 
     if(obj->thread() != qApp->thread()) {
         return false;
@@ -100,7 +104,7 @@ bool Cache::insert(QObject *obj)
 
 bool Cache::remove(QObject *obj)
 {
-    QMutexLocker locker(&mutex);
+    lock();
 
     objects.remove(obj);
     objectNameHash.remove(lookupObjectName.value(obj), obj);
@@ -188,7 +192,7 @@ void Cache::dump()
 
 void Cache::refreshCache(QObject *root)
 {
-    QMutexLocker locker(&mutex);
+    lock();
 
     objectNameHash.clear();
     classNameHash.clear();
@@ -205,6 +209,7 @@ void Cache::refreshCache(QObject *root)
 
 Cache Cache::intersect(const Cache &cache)
 {
+    lock();
     Cache newCache(*this);
     newCache.objects.intersect(cache.objects);
     return newCache;
@@ -212,6 +217,7 @@ Cache Cache::intersect(const Cache &cache)
 
 Cache Cache::unite(const Cache &cache)
 {
+    lock();
     Cache newCache(*this);
     newCache.objects.unite(cache.objects);
     return newCache;
@@ -219,11 +225,14 @@ Cache Cache::unite(const Cache &cache)
 
 bool Cache::isEmpty() const
 {
+    lock();
     return objects.isEmpty();
 }
 
 Cache Cache::children(QObject *ancestor)
 {
+    lock();
+
     if(!ancestor)
     {
         return Cache();
@@ -255,7 +264,7 @@ Cache Cache::children(QObject *ancestor)
 
 Cache Cache::byObjectName(const QString& name) const
 {
-    QMutexLocker locker(&mutex);
+    lock();
 
     if(name.contains("*"))
     {
@@ -280,6 +289,7 @@ Cache Cache::byObjectName(const QString& name) const
 
 Cache Cache::byObjectName(QObject *ancestor, const QString& name) const
 {
+    lock();
     QObjectList result;
     bySearchInAncestor(ancestor, name, result, Cache::matchObjectName);
     return Cache(result);
@@ -287,7 +297,7 @@ Cache Cache::byObjectName(QObject *ancestor, const QString& name) const
 
 Cache Cache::byClassName(const QString &name) const
 {
-    QMutexLocker locker(&mutex);
+    lock();
 
     if(name.contains("*"))
     {
@@ -312,6 +322,7 @@ Cache Cache::byClassName(const QString &name) const
 
 Cache Cache::byClassName(QObject *ancestor, const QString &name) const
 {
+    lock();
     QObjectList result;
     bySearchInAncestor(ancestor, name, result, Cache::matchClassName);
     return Cache(result);
@@ -363,6 +374,8 @@ void Cache::bySearchInAncestor(QObject *ancestor, const QString& name, QObjectLi
  */
 Cache Cache::byPropertyValue(const QString &property, const QVariant &value) const
 {
+    lock();
+
     QSet<QObject*> result;
     for(auto const& obj : qAsConst(objects))
     {
