@@ -49,7 +49,7 @@ bool Get::execSync(TestObject context, ActionCallback callback)
                     callback(context, ActionStatus::create(this).unsupportedType("in invalidCategory"));
                     return true;
                 case QQmlProperty::List:
-                    callback(context, ActionStatus::create(this).unsupportedType("in List"));
+                    handlePropertyList(prop, callback, context);
                     return true;
                 case QQmlProperty::Object:
                     handleObject(prop, callback, context);
@@ -118,6 +118,26 @@ AsyncResult Get::execAsync(TestObject context, ActionCallback callback)
 void Get::applyParams(QJsonObject params)
 {
     property_name = params.value("property_name").toString();
+}
+
+void Get::handlePropertyList(QQmlProperty prop, ActionCallback callback, TestObject context)
+{
+    ActionResult result;
+    result.type = ActionResult::ValueType::ObjectQtList;
+
+    auto refList = prop.read().value<QQmlListReference>();
+
+    QList<TestObject> lst;
+    for(int i = 0; i< refList.count(); ++i)
+    {
+        auto const& obj = refList.at(i);
+        TestObject testObject(obj);
+        lst.append(testObject);
+    }
+
+    result.objectValueList = lst;
+
+    callback(result, ActionStatus::create(this).ok());
 }
 
 void Get::handleNormal(QQmlProperty prop, ActionCallback callback, TestObject context)

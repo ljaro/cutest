@@ -89,7 +89,7 @@ void Dispatcher::parseCommand(const QString& cmd)
         state = State::CMD_PROCESSING;
         action.exec(ctx, [this, requestId](ActionResult result, Status status){
 
-            if(result.type != ActionResult::ValueType::Simple && result.type != ActionResult::ValueType::None)
+            if(result.type == ActionResult::ValueType::ObjectQt)
             {
                 auto& obj = result.objectValue;
                 if(checkAndRememberContext(obj))
@@ -103,6 +103,29 @@ void Dispatcher::parseCommand(const QString& cmd)
                     auto response = ActionResult().createResponse(requestId, ActionStatus::create(this).contextNotFound());
                     client->sendResponse(response);
                 }
+            }
+            else if(result.type == ActionResult::ValueType::ObjectQtList)
+            {
+                //auto lst = result.objectValueList;
+                for(auto const & testObject : qAsConst(result.objectValueList))
+                {
+                    auto obj = testObject.getQObject();
+                    auto exists = false;
+
+                    if(obj != nullptr)
+                    {
+                        exists = checkAndRememberContext(testObject);
+                    }
+
+                    if(!exists)
+                    {
+                        auto response = ActionResult().createResponse(requestId, ActionStatus::create(this).contextNotFound());
+                        client->sendResponse(response);
+                        return;
+                    }
+                }
+                auto response = result.createResponse(requestId, status);
+                client->sendResponse(response);
             }
             else if(result.type == ActionResult::ValueType::Simple)
             {
@@ -192,6 +215,7 @@ TestObject Dispatcher::getContext(ContextStr uuid) const
     }
     else
     {
+        // return empty object and decision about response is posponed to coresponding action
         return TestObject();
     }
 }

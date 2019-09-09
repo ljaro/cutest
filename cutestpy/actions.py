@@ -58,8 +58,6 @@ def handle_response(response):
         raise ResponseMissing('no response')
     if 'id' not in response:
         raise ResponseFormatError('missing id')
-    if 'context' not in response:
-        raise ResponseFormatError('missing context')
     if 'status' not in response:
         raise ResponseFormatError('missing status')
     if 'status' not in response['status']:
@@ -71,7 +69,8 @@ def handle_response(response):
         raise TestFailed(status, details)
     else:
         value = response['qobject'] if 'qobject' in response else response['simple'] if 'simple' in response else None
-        return response['context'], value
+        ctx = response['context'] if 'context' in response else ''
+        return ctx, value
 
 
 class ObjectActions:
@@ -279,7 +278,7 @@ class ObjectActions:
         message.update({"cmd": "get"})
         message.update({"context": self.context})
         message.update({"params": {"property_name": property_name}})
-        new_ctx, result = do_action(self._conn, message)
+        new_ctx, result = do_action(self._conn, message, fail_no_context=False)
         logger.debug('ok')
 
         if new_ctx == self.context:
@@ -362,3 +361,4 @@ class ObjectActions:
         message.update({"context": self.context})
         new_ctx, result = do_action(self._conn, message, fail_no_context=False)
         self.print_object(result, max_depth, 0)
+
