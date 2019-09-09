@@ -28,14 +28,15 @@ ActionResult::ActionResult(TestObject &&testObject)
 
 QByteArray ActionResult::createResponse(QString requestId, Status status)
 {
+    QJsonDocument doc;
+    QJsonObject resp;
+
+    resp.insert("id", requestId);
+    resp.insert("status", QJsonObject::fromVariantHash(status.getStatuses()));
+
     if (type == ValueType::Simple)
     {
-        QJsonDocument doc;
-        QJsonObject resp;
-        resp.insert("id", requestId);
         resp.insert("context", QString::fromStdString(objectValue.getUuid()));
-        resp.insert("status", QJsonObject::fromVariantHash(status.getStatuses()));
-
 
         if(simpleValue.type() == QVariant::Type::List)
             resp.insert("simple", simpleValue.toJsonArray());
@@ -45,32 +46,39 @@ QByteArray ActionResult::createResponse(QString requestId, Status status)
         else
             resp.insert("simple", simpleValue.toJsonValue());
 
-
         doc.setObject(resp);
         return doc.toJson();
     }
     else if (type == ValueType::ObjectQt)
     {
-        QJsonDocument doc;
-        QJsonObject resp;
-        resp.insert("id", requestId);
         resp.insert("context", QString::fromStdString(objectValue.getUuid()));
-        resp.insert("status", QJsonObject::fromVariantHash(status.getStatuses()));
         resp.insert("qobject", objectValue.serialize());
+        doc.setObject(resp);
+        return doc.toJson();
+    }
+    else if (type == ValueType::ObjectQtList)
+    {
+        //TODO in some cases i.e get(...) there is no need to send root.context
+        //because we return list
+        //in that case:
+        //no context in response root
+        //test should fail if current context doesn't exists
+        //so global no context if statement should be removed
+        //and test fail condition must be based on response status
+
+        QJsonArray arr;
+        for(auto const & testObj : qAsConst(objectValueList))
+        {
+            arr.append(testObj.serialize());
+        }
+        resp.insert("qobject", arr);
+
         doc.setObject(resp);
         return doc.toJson();
     }
     else
     {
-        QJsonDocument doc;
-        QJsonObject resp;
-        resp.insert("id", requestId);
-        resp.insert("status", QJsonObject::fromVariantHash(status.getStatuses()));
         doc.setObject(resp);
         return doc.toJson();
     }
-
-
-
 }
-

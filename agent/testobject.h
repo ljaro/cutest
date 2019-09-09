@@ -15,21 +15,21 @@ class TestObject
 {
 public:
     TestObject();
-    TestObject(QString ctxStr);
-    TestObject(QObject* qobject);
+    explicit TestObject(QString ctxStr);
+    explicit TestObject(QObject* qobject);
     ContextStr getUuid() const {return uuid;}
     QObject* getQObject() const {return qobject;}
     bool isValid(){return qobject != nullptr;}
 
     friend bool operator==(const TestObject& lhs, const TestObject& rhs);
 public:
-    QJsonObject serialize();
+    QJsonObject serialize() const;
     void updateProperty(QString name, QVariant value);
 private:
     ContextStr uuid;
     QObject* qobject;
     QVariantHash properties;
-    QString typeFromObject(QObject *obj);
+    QString typeFromObject(QObject *obj) const;
 };
 
 struct TestObjectHash

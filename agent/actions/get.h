@@ -23,6 +23,7 @@ private:
     void handleNormal(QQmlProperty prop, ActionCallback callback, TestObject context);
     void handleObject(QQmlProperty prop, ActionCallback callback, TestObject context);
     QString property_name;
+    void handlePropertyList(QQmlProperty prop, ActionCallback callback, TestObject context);
 };
 
 }}
