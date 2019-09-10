@@ -31,12 +31,13 @@ Cache::Cache() : mutex(QMutex::Recursive)
 
 Cache::~Cache()
 {
-    std::cout << "~Cache";
+    
 }
 
-Cache::Cache(const Cache& other)
+Cache::Cache(const Cache& other) : mutex(QMutex::Recursive)
 {
-    QMutexLocker locker(&other.mutex);
+    QMutexLocker locker1(Spy::instance()->objectLock());
+    QMutexLocker locker2(&other.mutex);
     objects = other.objects;
 }
 
