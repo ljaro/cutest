@@ -54,8 +54,6 @@ bool WaitFor::execSync(TestObject context,
         return true;
     }
 
-    qDebug() << "<<<<<<<<<<< sync not found";
-
     return false;
 }
 

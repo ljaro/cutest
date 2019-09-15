@@ -5,6 +5,7 @@
 #include "testaction.h"
 #include "actions/waitfor.h"
 #include "actions/waitforcheck.h"
+#include "actions/waitforcheckchild.h"
 #include "actions/waitforchild.h"
 #include "actions/click.h"
 #include "actions/nullaction.h"
@@ -31,6 +32,7 @@ Agent::Agent()
     using namespace TestRobot::Action;
     TestActionBuilder::registerAction(make_shared<WaitFor>());
     TestActionBuilder::registerAction(make_shared<WaitForCheck>());
+    TestActionBuilder::registerAction(make_shared<WaitForCheckChild>());
     TestActionBuilder::registerAction(make_shared<WaitForChild>());
     TestActionBuilder::registerAction(make_shared<FindSibling>());
     TestActionBuilder::registerAction(make_shared<Click>());
