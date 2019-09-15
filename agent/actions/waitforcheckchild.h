@@ -1,20 +1,20 @@
-#ifndef WAITFORACTIONCHECK_H
-#define WAITFORACTIONCHECK_H
+#ifndef WAITFORCHECKCHILD_H
+#define WAITFORCHECKCHILD_H
 
-#include "waitfor.h"
+#include "waitforchild.h"
 namespace TestRobot {
 namespace Action {
-class WaitForCheck : public WaitFor
+class WaitForCheckChild : public WaitForChild
 {
 public:
-    WaitForCheck();
+    WaitForCheckChild();
 protected:
     void applyParams(QJsonObject params) override;
-    std::string className() const override {return "wait_check";}
+    std::string className() const override {return "wait_check_child";}
     void timeoutHandler(TestObject context, ActionCallback callback) override;
     int getTimeout() const override;
 
     int timeout = 0;
 };
 }}
-#endif // WAITFORACTIONCHECK_H
+#endif // WAITFORCHECKCHILD_H

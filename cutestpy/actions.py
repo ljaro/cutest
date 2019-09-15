@@ -132,7 +132,7 @@ class ObjectActions:
     def wait_for_child_object(self, object_name, visible=True):
         return self.wait_for_child('objectName={0}&visible={1}'.format(object_name, str(visible).lower()))
 
-    def wait_for_check(self, expr, timeout=5):
+    def wait_check(self, expr, timeout=5):
         """
         For given object_name wait for object until timeout expire.
         If timeout expire will return False as object was not found.
@@ -150,12 +150,37 @@ class ObjectActions:
         """
         logger.info('wait_for_check {}'.format(expr))
         message = {}
-        message.update({"cmd": "wait_for_check"})
+        message.update({"cmd": "wait_check"})
         message.update({"context": "frontend"})
         message.update({"params": {"timeout": timeout, "exp": expr}})
         new_ctx, result = do_action(self._conn, message, fail_no_context=False)
 
-        return create_object(result) if new_ctx else None
+        return create_object(result)
+
+    def wait_check_child(self, expr, timeout=5):
+        """
+        For given object_name wait for object until timeout expire.
+        If timeout expire will return False as object was not found.
+        If object found before timeout expire returns True.
+
+        global test timeout is ignored for this action i.e timeout=10000 will make wait test until is finished
+        regardless of test timeout which could be 5 seconds
+
+        Can be used to check whether object exists or not without failing test
+
+        :param object_name:
+        :param visible:
+        :param timeout:
+        :return: True or False depending whether object was found
+        """
+        logger.info('exists_child {}'.format(expr))
+        message = {}
+        message.update({"cmd": "wait_check_child"})
+        message.update({"context": self.context})
+        message.update({"params": {"timeout": timeout, "exp": expr}})
+        new_ctx, result = do_action(self._conn, message, fail_no_context=False)
+
+        return create_object(result)
 
     def click(self, hold_time=0):
         """

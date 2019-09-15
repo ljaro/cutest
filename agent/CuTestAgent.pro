@@ -44,6 +44,7 @@ SOURCES += agent.cpp \
     actions/tree.cpp \
     actions/waitfor.cpp \
     actions/waitforcheck.cpp \
+    actions/waitforcheckchild.cpp \
     actions/waitforchild.cpp \
     actions/write.cpp \
     hook.cpp \
@@ -86,6 +87,7 @@ HEADERS += agent.h\
     actions/tree.h \
     actions/waitfor.h \
     actions/waitforcheck.h \
+    actions/waitforcheckchild.h \
     actions/waitforchild.h \
     actions/write.h \
     response.h \
