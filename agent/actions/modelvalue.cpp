@@ -62,9 +62,5 @@ AsyncResult ModelValue::execAsync(TestObject context, ActionCallback callback)
 void ModelValue::applyParams(QJsonObject params)
 {
     paramRole = params.value("role").toString();
-
-    if(params.contains("index"))
-    {
-        paramIndex = params.value("index");
-    }
+    paramIndex = params.value("index").toVariant();
 }
