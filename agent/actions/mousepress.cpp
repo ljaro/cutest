@@ -106,6 +106,8 @@ void MousePress::applyParams(QJsonObject params)
     y = params.value("y");
 
     auto type = params.value("type").toString();
+  
+    actionType = ActionType::None;
     if(type == "mouse_press") actionType = ActionType::Press;
     if(type == "mouse_release") actionType = ActionType::Release;
     if(type == "mouse_move") actionType = ActionType::Move;
