@@ -1,0 +1,25 @@
+name: Build
+
+on: pull_request
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest] # , windows-latest, macOS-latest] 
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        packages: 'qt.qt5.5124.gcc_64'
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Test qmake
+      run: qmake -v
+    - name: Compile Cutest
+      run: mkdir -p agent/build && cd agent/build && qmake ../CuTestAgent.pro && make -j$(nproc)
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: cutest_agent
+        path: agent/build/libTestRobotAgent.so
