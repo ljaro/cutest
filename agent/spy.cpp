@@ -155,7 +155,8 @@ void Spy::processQueue()
 
     Q_ASSERT(QThread::currentThread() == thread());
 
-    for(const auto &obj : qAsConst(newObjectsQueue))
+    const auto newObjectsQueueCopy = newObjectsQueue;
+    for(const auto& obj : newObjectsQueueCopy)
     {
         if(cache.insert(obj))
         {
